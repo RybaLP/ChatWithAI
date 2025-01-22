@@ -1,6 +1,6 @@
-"use client";
-
-import React, { useState } from "react";
+import React from "react";
+import { HiPlus } from "react-icons/hi"; // Ikona plusa
+import { BiMessageAltDots } from "react-icons/bi"; // Ikona wiadomości
 
 type ChatSidebarProps = {
   chats: { id: string; name: string }[];
@@ -8,25 +8,27 @@ type ChatSidebarProps = {
   onNewChat: () => void;
 };
 
-const ChatSidebar: React.FC<ChatSidebarProps> = ({ chats, onSelectChat, onNewChat }) => {
+const Sidebar: React.FC<ChatSidebarProps> = ({ chats, onSelectChat, onNewChat }) => {
   return (
-    <div className="w-1/4 bg-gray-800 text-white h-full flex flex-col">
-      <div className="p-4 border-b border-gray-700">
+    <div className="bg-gray-800 text-white w-64 h-full flex flex-col">
+      <div className="flex items-center justify-between p-4 border-b border-gray-700">
+        <h1 className="text-lg font-bold">Moje czaty</h1>
         <button
+          className="p-2 bg-gray-700 rounded hover:bg-gray-600"
           onClick={onNewChat}
-          className="w-full bg-blue-600 hover:bg-blue-700 px-4 py-2 rounded text-sm font-semibold"
         >
-          Nowy Chat
+          <HiPlus className="text-xl" />
         </button>
       </div>
       <div className="flex-1 overflow-y-auto">
         {chats.map((chat) => (
           <div
             key={chat.id}
-            className="p-4 hover:bg-gray-700 cursor-pointer"
             onClick={() => onSelectChat(chat.id)}
+            className={`p-4 flex items-center space-x-2 cursor-pointer hover:bg-gray-700`}
           >
-            {chat.name}
+            <BiMessageAltDots className="text-xl" />
+            <span>{chat.name}</span>
           </div>
         ))}
       </div>
@@ -34,4 +36,5 @@ const ChatSidebar: React.FC<ChatSidebarProps> = ({ chats, onSelectChat, onNewCha
   );
 };
 
-export default ChatSidebar;
+
+export default Sidebar;
