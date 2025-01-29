@@ -21,12 +21,19 @@ const LoginPage: React.FC = () => {
       });
 
       if (response.ok) {
-        router.push("/chat");
+        const data = await response.json();
+        const token = data.token;
+
+        // Zapisz token w localStorage
+        localStorage.setItem("token", token);
+
+        router.push("/chat"); // Przekieruj do /chat po zalogowaniu
       } else {
         const data = await response.json();
-        setError(data.error || "Nieprawidłowe dane logowania.");
+        setError(data.message || "Nieprawidłowe dane logowania."); // Poprawiony komunikat
       }
     } catch (err) {
+      console.error("Błąd logowania:", err); // Dodajemy logowanie błędu do konsoli
       setError("Błąd podczas logowania.");
     }
   };

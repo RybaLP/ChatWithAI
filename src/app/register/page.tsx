@@ -23,12 +23,16 @@ const RegisterPage: React.FC = () => {
 
       if (response.ok) {
         setSuccess("Rejestracja zakończona sukcesem! Możesz się teraz zalogować.");
+        // Resetuj formularz po udanej rejestracji (opcjonalne)
+        setEmail("");
+        setPassword("");
+        setUsername("");
       } else {
         const data = await response.json();
-        console.log("Server response:", data);
-        setError(data.message || "Coś poszło nie tak.");
+        setError(data.message || "Coś poszło nie tak."); // Poprawiony komunikat
       }
     } catch (err) {
+      console.error("Błąd rejestracji:", err); // Dodajemy logowanie błędu do konsoli
       setError("Błąd podczas rejestracji.");
     }
   };

@@ -1,39 +1,37 @@
-import type { NextRequest } from "next/server";
-import bcrypt from "bcrypt";
-import connectToDatabase from "@/lib/mongodb";
-import User from "@/models/User";
+import { NextRequest, NextResponse } from 'next/server';
+import bcrypt from 'bcrypt';
+import connectToDatabase from '@/lib/mongodb';
+import User from '@/models/User';
 
 export async function POST(req: NextRequest) {
   try {
     const { username, email, password } = await req.json();
 
     if (!username || !email || !password) {
-      return new Response(JSON.stringify({ message: "Missing fields" }), {
-        status: 400,
-      });
+      return NextResponse.json({ message: 'Missing fields' }, { status: 400 });
     }
 
     await connectToDatabase();
 
+    const existingUser = await User.findOne({ email });
+    if (existingUser) {
+      return NextResponse.json({ message: 'User with this email already exists' }, { status: 400 });
+    }
+
     const hashedPassword = await bcrypt.hash(password, 10);
 
-    const newUser = await User.create({
+    const newUser = new User({
       username,
       email,
       password: hashedPassword,
     });
 
-    return new Response(
-      JSON.stringify({
-        message: "User registered successfully",
-        user: newUser,
-      }),
-      { status: 201 }
-    );
+    await newUser.save(); // Zapisujemy użytkownika
+
+    return NextResponse.json({ message: 'User registered successfully' }, { status: 201 }); // Status 201 i wiadomość
+
   } catch (error) {
-    return new Response(
-      JSON.stringify({ message: "Error creating user", error }),
-      { status: 500 }
-    );
+    console.error('Błąd rejestracji:', error);
+    return NextResponse.json({ message: 'Error creating user', error }, { status: 500 });
   }
 }
