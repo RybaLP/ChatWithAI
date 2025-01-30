@@ -2,7 +2,7 @@ import Groq from "groq-sdk";
 import dotenv from "dotenv"
 
 const groq = new Groq({
-  apiKey: process.env.GROQ_API_KEY || "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",
+  apiKey: process.env.GROQ_API_KEY || ""   ///////////////////////////////////////////////////
 });
 
 export const getChatCompletion = async (message: string) => {
