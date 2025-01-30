@@ -1,85 +1,105 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
-import ChatInput from "./ChatInput";
-import Message from "./Message";
+import { useState, useEffect } from 'react';
 
-type MessageType = { content: string; sender: "user" | "bot" };
+interface Message {
+    _id: string;
+    role: string;
+    text: string;
+}
 
-const ChatWindow: React.FC<{ chatId: string; userId: string }> = ({ chatId, userId }) => {
-  const [messages, setMessages] = useState<MessageType[]>([]);
-  const [currentChatId, setCurrentChatId] = useState<string | null>(chatId);
+interface ChatWindowProps {
+    chatId: string | null;
+}
 
-  useEffect(() => {
-    if (!currentChatId) return;
+const ChatWindow: React.FC<ChatWindowProps> = ({ chatId }) => {
+    const [messages, setMessages] = useState<Message[]>([]);
+    const [newMessageText, setNewMessageText] = useState('');
 
-    const fetchMessages = async () => {
-      try {
-        const response = await fetch(`/api/chats/${currentChatId}`, {
-          headers: { "x-user-id": userId },
-        });
+    useEffect(() => {
+        const fetchMessages = async () => {
+            if (chatId) {
+                try {
+                    const response = await fetch(`/api/chats/${chatId}`, {
+                        headers: {
+                            'Authorization': `Bearer ${localStorage.getItem('token')}`
+                        }
+                    });
+                    if (!response.ok) {
+                        throw new Error(`HTTP error! status: ${response.status}`);
+                    }
+                    const data = await response.json();
+                    setMessages(data);
+                    console.log('Messages updated:', data);
+                } catch (error) {
+                    console.error('Error fetching messages:', error);
+                }
+            } else {
+                setMessages([]); // Czyścimy listę wiadomości, gdy chatId jest null
+            }
+        };
 
-        if (!response.ok) {
-          console.error("Failed to fetch messages");
-          setMessages([]);
-          return;
+        fetchMessages();
+    }, [chatId]);
+
+    const handleSendMessage = async () => {
+        if (newMessageText.trim() !== '' && chatId) {
+            try {
+                const response = await fetch(`/api/chats/${chatId}/addMessage`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${localStorage.getItem('token')}`
+                    },
+                    body: JSON.stringify({ message: newMessageText }),
+                });
+
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+
+                setNewMessageText('');
+                // Odśwież listę wiadomości po wysłaniu nowej wiadomości
+                const updatedChat = await fetch(`/api/chats/${chatId}`, {
+                    headers: {
+                        'Authorization': `Bearer ${localStorage.getItem('token')}`
+                    }
+                });
+                const data = await updatedChat.json();
+                setMessages(data);
+            } catch (error) {
+                console.error('Error sending message:', error);
+            }
         }
-
-        const data = await response.json();
-        setMessages(data.messages || []);
-      } catch (error) {
-        console.error("Error fetching messages:", error);
-      }
     };
 
-    fetchMessages();
-  }, [currentChatId, userId]);
-
-  const sendMessage = async (message: string) => {
-    const userMessage: MessageType = { content: message, sender: "user" };
-    setMessages((prev) => [...prev, userMessage]);
-
-    try {
-      const response = await fetch("/api/chats", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          chatId: currentChatId,
-          message,
-          userId,
-        }),
-      });
-
-      if (!response.ok) {
-        console.error("Failed to send message");
-        return;
-      }
-
-      const data = await response.json();
-      const botMessage: MessageType = { content: data.reply, sender: "bot" };
-
-      // Aktualizacja ID czatu, jeśli nowy czat został utworzony
-      if (!currentChatId) setCurrentChatId(data.chatId);
-
-      setMessages((prev) => [...prev, botMessage]);
-    } catch (error) {
-      console.error("Error sending message:", error);
-    }
-  };
-
-  return (
-    <div className="flex flex-col h-full flex-1 bg-gray-900 text-white">
-      <div className="flex-1 overflow-y-auto p-4 space-y-4">
-        {messages.map((msg, index) => (
-          <Message key={index} content={msg.content} sender={msg.sender} />
-        ))}
-      </div>
-      <ChatInput onSend={sendMessage} />
-    </div>
-  );
+    return (
+        <div className="flex-1 flex flex-col p-4">
+            <div className="flex-grow overflow-y-auto">
+                {messages.map(message => (
+                    <div key={message._id} className={`mb-2 ${message.role === 'user' ? 'text-right' : 'text-left'}`}>
+                        <div className={`inline-block p-2 rounded ${message.role === 'user' ? 'bg-blue-500 text-white' : 'bg-gray-200'}`}>
+                            {message.text}
+                        </div>
+                    </div>
+                ))}
+            </div>
+            <div className="mt-4 flex">
+                <input
+                    type="text"
+                    className="flex-grow border border-gray-300 rounded p-2 mr-2"
+                    value={newMessageText}
+                    onChange={e => setNewMessageText(e.target.value)}
+                />
+                <button
+                    className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+                    onClick={handleSendMessage}
+                >
+                    Wyślij
+                </button>
+            </div>
+        </div>
+    );
 };
-
 
 export default ChatWindow;

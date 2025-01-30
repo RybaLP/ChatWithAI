@@ -1,5 +1,8 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
+import '@/models/Chat'; // Importujemy model Chat
+import '@/models/User'; // Jeśli używasz modelu User
+import '@/models/UserChats'; // Importujemy model UserChats
 import "./globals.css";
 
 const geistSans = Geist({
