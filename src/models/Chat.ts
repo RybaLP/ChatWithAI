@@ -8,6 +8,7 @@ interface HistoryItem {
 
 export interface ChatDocument extends Document {
     userId: Types.ObjectId;
+    title: String,
     history: HistoryItem[];
     _id: Types.ObjectId;
     createdAt: Date; // Dodajemy createdAt
@@ -20,6 +21,10 @@ const chatSchema = new mongoose.Schema<ChatDocument>({
         type: mongoose.Schema.Types.ObjectId,
         required: true,
         ref: 'User'
+    },
+    title: {  // Dodajemy pole title
+        type: String,
+        required: true,
     },
     history: [
         {

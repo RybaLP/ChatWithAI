@@ -27,6 +27,7 @@ export const GET = authenticateApp(async (req: NextRequest) => {
                 return {
                     _id: chat._id.toString(),
                     userId: chat.userId.toString(),
+                    title: chat.title,
                     history: history,
                     createdAt: chat.createdAt.toISOString(), // Konwertujemy datę na string w formacie ISO
                     updatedAt: chat.updatedAt.toISOString(), // Konwertujemy datę na string w formacie ISO

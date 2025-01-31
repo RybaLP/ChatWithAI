@@ -18,6 +18,7 @@ export const POST = authenticateApp(async (req: NextRequest) => {
     // 1. Tworzymy nowy czat z tytułem i userId
     const newChat = new Chat({
       userId,
+      title,
       history: [],
     });
 
@@ -38,7 +39,7 @@ export const POST = authenticateApp(async (req: NextRequest) => {
       await userChats.save();
     }
 
-    return NextResponse.json({ message: 'Chat added successfully', chatId: newChat._id }, { status: 201 });
+    return NextResponse.json({ message: 'Chat added successfully', chatId: newChat._id , title}, { status: 201 });
   } catch (error) {
     console.error('Error adding chat:', error);
     return NextResponse.json({ message: 'Error adding chat' }, { status: 500 });
