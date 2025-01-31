@@ -1,13 +1,53 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
+import { motion } from "framer-motion";
+
+interface StarProps {
+  x: number;
+  y: number;
+  size: number;
+}
+
+const Star = ({ x, y, size }: StarProps) => {
+  return (
+    <motion.div
+      className="absolute rounded-full bg-white"
+      style={{
+        left: `${x}px`,
+        top: `${y}px`,
+        width: `${size}px`,
+        height: `${size}px`,
+      }}
+      initial={{ opacity: 0, scale: 0 }}
+      animate={{ opacity: 1, scale: 1 }}
+      transition={{ delay: Math.random() * 2, duration: 0.5 }}
+    />
+  );
+};
 
 const LoginPage: React.FC = () => {
   const router = useRouter();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
+  const [stars, setStars] = useState<StarProps[]>([]);
+
+  const generateStars = () => {
+    const newStars = Array.from({ length: 100 }).map(() => ({
+      x: Math.random() * window.innerWidth,
+      y: Math.random() * window.innerHeight,
+      size: Math.random() * 3 + 2,
+    }));
+    setStars(newStars);
+  };
+
+  useEffect(() => {
+    generateStars();
+    window.addEventListener("resize", generateStars);
+    return () => window.removeEventListener("resize", generateStars);
+  }, []);
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -30,43 +70,73 @@ const LoginPage: React.FC = () => {
         router.push("/chat"); // Przekieruj do /chat po zalogowaniu
       } else {
         const data = await response.json();
-        setError(data.message || "Nieprawidłowe dane logowania."); // Poprawiony komunikat
+        setError(data.message || "Nieprawidłowe dane logowania.");
       }
     } catch (err) {
-      console.error("Błąd logowania:", err); // Dodajemy logowanie błędu do konsoli
+      console.error("Błąd logowania:", err);
       setError("Błąd podczas logowania.");
     }
   };
 
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen bg-gray-100">
-      <h1 className="text-2xl font-bold mb-4">Logowanie</h1>
-      <form className="bg-white p-6 rounded shadow-md w-80" onSubmit={handleLogin}>
-        <div className="mb-4">
-          <label className="block text-sm font-medium mb-1">E-mail</label>
-          <input
-            type="email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            className="w-full p-2 border rounded bg-black"
-            required
-          />
-        </div>
-        <div className="mb-4">
-          <label className="block text-sm font-medium mb-1">Hasło</label>
-          <input
-            type="password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            className="w-full p-2 border rounded bg-black"
-            required
-          />
-        </div>
-        <button className="bg-blue-500 text-white w-full py-2 rounded hover:bg-blue-600">
-          Zaloguj się
-        </button>
-        {error && <p className="text-red-500 text-sm mt-2">{error}</p>}
-      </form>
+    <div className="relative min-h-screen bg-black overflow-hidden flex flex-col items-center justify-center">
+      {/* Animated Background */}
+      <motion.div
+        className="absolute inset-0 z-0"
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ duration: 2 }}
+      >
+        <div className="absolute inset-0 bg-gradient-to-r from-purple-600 to-pink-600 opacity-40 blur-2xl" />
+      </motion.div>
+
+      {/* Stars */}
+      <div className="absolute inset-0 z-10">
+        {stars.map((star, i) => (
+          <Star key={i} x={star.x} y={star.y} size={star.size} />
+        ))}
+      </div>
+
+      {/* Login Form */}
+      <motion.div
+        initial={{ opacity: 0, y: 50 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.7, delay: 0.3 }}
+        className="relative z-20 bg-gray-900 p-8 rounded-xl shadow-2xl w-full max-w-md"
+      >
+        <h1 className="text-3xl font-bold mb-6 text-center bg-clip-text text-transparent bg-gradient-to-r from-blue-400 to-pink-400">
+          Logowanie
+        </h1>
+        <form onSubmit={handleLogin}>
+          <div className="mb-6">
+            <label className="block text-sm font-medium mb-2 text-gray-300">E-mail</label>
+            <input
+              type="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              className="w-full p-3 bg-gray-800 text-white rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+              required
+            />
+          </div>
+          <div className="mb-6">
+            <label className="block text-sm font-medium mb-2 text-gray-300">Hasło</label>
+            <input
+              type="password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              className="w-full p-3 bg-gray-800 text-white rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+              required
+            />
+          </div>
+          <button
+            type="submit"
+            className="w-full bg-gradient-to-r from-blue-500 to-pink-500 text-white py-3 rounded-lg hover:from-blue-600 hover:to-pink-600 transition-all"
+          >
+            Zaloguj się
+          </button>
+          {error && <p className="text-red-500 text-sm mt-4 text-center">{error}</p>}
+        </form>
+      </motion.div>
     </div>
   );
 };
