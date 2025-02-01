@@ -32,10 +32,13 @@ cd ChatWithAi
 npm install
 ```
 
-4. **Skonfiguruj zmienne środowiskowe:**
-![obraz](https://github.com/user-attachments/assets/89fe430b-9d2f-424c-b828-b3ec24b6f272)
-
-5. **Uruchom projekt:**
+4. **Skonfiguruj zmienne środowiskowe w .env.local :**
+```bash
+JWT_SECRET
+GROQ_API_KEY
+NEXT_PUBLIC_APP_URL
+```
+6. **Uruchom projekt:**
  ```bash
 npm run dev
 ```
