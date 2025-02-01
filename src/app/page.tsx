@@ -4,6 +4,52 @@ import { useRouter } from "next/navigation";
 import { useEffect, useState, useRef } from "react";
 import { motion, useInView } from "framer-motion";
 
+const RocketIcon = () => (
+  <svg
+    width="50"
+    height="50"
+    viewBox="0 0 24 24"
+    fill="none"
+    xmlns="http://www.w3.org/2000/svg"
+  >
+    <path
+      d="M12 2C12 2 15 2 16 3C17 4 17 6 17 6L12 11L7 6C7 6 7 4 8 3C9 2 12 2 12 2Z"
+      stroke="white"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    />
+    <path
+      d="M12 11V22"
+      stroke="white"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    />
+    <path
+      d="M8 22H16"
+      stroke="white"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    />
+    <path
+      d="M7 6L12 11L17 6"
+      stroke="white"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    />
+    <path
+      d="M10 22V18H14V22"
+      stroke="white"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    />
+  </svg>
+);
+
 interface StarProps {
   x: number;
   y: number;
@@ -107,27 +153,28 @@ export default function LandingPage() {
           <h1 className="text-5xl md:text-8xl font-bold mb-6 bg-clip-text text-transparent bg-gradient-to-r from-blue-400 to-pink-400">
             COSMIC AI
           </h1>
-          <p className="text-2xl md:text-3xl mb-8">Supercharge your creativity and productivity</p>
-          <div className="flex gap-6">
-            <motion.button
-              whileHover={{ scale: 1.2, boxShadow: "0 0 12px rgba(0, 0, 0, 0.4)" }}
-              whileTap={{ scale: 0.9 }}
-              transition={{ duration: 0.2 }}
-              onClick={() => router.push("/login")}
-              className="px-8 py-4 text-xl bg-blue-500 text-white rounded-xl hover:bg-blue-600"
-            >
-              Login
-            </motion.button>
-            <motion.button
-              whileHover={{ scale: 1.2, boxShadow: "0 0 12px rgba(0, 0, 0, 0.4)" }}
-              whileTap={{ scale: 0.9 }}
-              transition={{ duration: 0.2 }}
-              onClick={() => router.push("/register")}
-              className="px-8 py-4 text-xl bg-purple-500 text-white rounded-xl hover:bg-purple-600"
-            >
-              Register
-            </motion.button>
-          </div>
+          <p className="text-2xl md:text-3xl mb-8">Zwiększ swoją kreatywność i produktywność</p>
+          <div className="flex flex-col sm:flex-row gap-6 justify-center items-center">
+  <motion.button
+    whileHover={{ scale: 1.2, boxShadow: "0 0 12px rgba(0, 0, 0, 0.4)" }}
+    whileTap={{ scale: 0.9 }}
+    transition={{ duration: 0.2 }}
+    onClick={() => router.push("/login")}
+    className="px-8 py-4 text-xl bg-blue-500 text-white rounded-xl hover:bg-blue-600"
+  >
+    Login
+  </motion.button>
+  <motion.button
+    whileHover={{ scale: 1.2, boxShadow: "0 0 12px rgba(0, 0, 0, 0.4)" }}
+    whileTap={{ scale: 0.9 }}
+    transition={{ duration: 0.2 }}
+    onClick={() => router.push("/register")}
+    className="px-8 py-4 text-xl bg-purple-500 text-white rounded-xl hover:bg-purple-600"
+  >
+    Register
+  </motion.button>
+</div>
+
         </motion.div>
       </main>
 

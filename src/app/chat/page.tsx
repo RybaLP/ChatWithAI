@@ -10,6 +10,8 @@ interface Chat {
   title: string;
 }
 
+
+
 const ChatPage = () => {
   const [selectedChatId, setSelectedChatId] = useState<string | null>(null);
   const [chats, setChats] = useState<Chat[]>([]);
