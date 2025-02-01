@@ -16,7 +16,7 @@ interface SidebarProps {
 
 const Sidebar: React.FC<SidebarProps> = ({ chats, onSelectChat, onNewChat }) => {
     const [newChatTitle, setNewChatTitle] = useState("");
-    const [isOpen, setIsOpen] = useState(true); // Domyślnie otwarty
+    const [isOpen, setIsOpen] = useState(true);
 
     const handleNewChatClick = () => {
         if (newChatTitle.trim() !== "") {
@@ -30,18 +30,42 @@ const Sidebar: React.FC<SidebarProps> = ({ chats, onSelectChat, onNewChat }) => 
         closed: { x: "-100%", opacity: 0 }
     };
 
+    const handleLogout = async () => {
+        try {
+            const response = await fetch('/api/logout', {
+                method: 'POST',
+            });
+
+            if (response.ok) {
+                localStorage.removeItem('token');
+                window.location.href = '/';
+                console.log("Wylogowano pomyślnie");
+            } else {
+                console.error("Błąd wylogowywania:", response.status);
+                const errorData = await response.json();
+                alert(errorData.message || "Wystąpił błąd podczas wylogowywania.");
+            }
+        } catch (error) {
+            console.error("Błąd wylogowywania:", error);
+            alert("Wystąpił błąd podczas wylogowywania.");
+        }
+    };
+
     return (
         <div className="relative h-screen">
             <AnimatePresence>
                 {isOpen && (
                     <motion.div
                         variants={sidebarVariants}
-                        initial="closed" // Zawsze zaczynamy od zamkniętego stanu
-                        animate="open" // Animujemy do otwartego stanu
-                        exit="closed" // Animujemy do zamkniętego stanu przy wyjściu
+                        initial="closed"
+                        animate="open"
+                        exit="closed"
                         transition={{ duration: 0.5 }}
                         className="w-64 bg-gray-900 text-white p-6 shadow-xl border-r border-gray-700 h-screen fixed top-0 left-0 z-10 overflow-y-auto md:static"
                     >
+                        {/* Przycisk wylogowania na samej górze */}
+                       
+
                         <div className="mb-6">
                             <input
                                 type="text"
@@ -58,6 +82,17 @@ const Sidebar: React.FC<SidebarProps> = ({ chats, onSelectChat, onNewChat }) => 
                             >
                                 Nowy czat
                             </motion.button>
+
+                            <motion.button
+                            whileHover={{ scale: 1.05 }}
+                            whileTap={{ scale: 0.95 }}
+                            onClick={handleLogout}
+                            className="w-full bg-red-500 hover:bg-red-700 text-white font-bold py-3 px-4 rounded-lg mb-6 transition-all my-5" // Dodano margin-bottom
+                        >
+                            Wyloguj
+                        </motion.button>
+
+
                         </div>
 
                         <h2 className="text-xl font-bold mb-4 text-purple-400">Czat</h2>
