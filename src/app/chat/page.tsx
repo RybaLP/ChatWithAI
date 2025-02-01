@@ -39,6 +39,12 @@ const ChatPage = () => {
     fetchChats();
   }, []); // Pobieramy czaty tylko na początku
 
+  useEffect(() => {
+    if (!chats.some(chat => chat._id === selectedChatId)) {
+      setSelectedChatId(null);
+    }
+  }, [chats, selectedChatId]);
+
   // Funkcja do obsługi wybierania czatu
   const handleSelectChat = (chatId: string) => {
     setSelectedChatId(chatId);
@@ -70,6 +76,34 @@ const ChatPage = () => {
     }
   };
 
+  const handleDeleteChat = async (chatId: string) => {
+    try {
+      const token = localStorage.getItem("token");
+      if (!token) {
+        alert("Brak tokena uwierzytelniającego.");
+        return;
+      }
+  
+      const response = await fetch(`/api/chats/${chatId}/deleteMessage`, {
+        method: "DELETE",
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+  
+      if (!response.ok) {
+        throw new Error("Błąd usuwania czatu");
+      }
+  
+      // Aktualizujemy listę czatów bez odświeżania strony
+      setChats((prevChats) => prevChats.filter((chat) => chat._id !== chatId));
+    } catch (error) {
+      console.error("Błąd usuwania czatu:", error);
+    }
+  };
+  
+
+
   return (
     <div className="relative min-h-screen bg-black flex">
       {/* Animated Background */}
@@ -89,7 +123,7 @@ const ChatPage = () => {
         transition={{ duration: 0.5 }}
         className="relative z-10"
       >
-        <Sidebar chats={chats} onSelectChat={handleSelectChat} onNewChat={handleNewChat} />
+        <Sidebar chats={chats} onSelectChat={handleSelectChat} onNewChat={handleNewChat} onDeleteChat={handleDeleteChat} />
       </motion.div>
 
       {/* Chat Window */}

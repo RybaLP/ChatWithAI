@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
+import { FaTrash } from "react-icons/fa";
 
 interface Chat {
     _id: string;
@@ -12,9 +13,10 @@ interface SidebarProps {
     chats: Chat[];
     onSelectChat: (chatId: string) => void;
     onNewChat: (title: string) => void;
+    onDeleteChat : (chatId : string) => void;
 }
 
-const Sidebar: React.FC<SidebarProps> = ({ chats, onSelectChat, onNewChat }) => {
+const Sidebar: React.FC<SidebarProps> = ({ chats, onSelectChat, onNewChat, onDeleteChat }) => {
     const [newChatTitle, setNewChatTitle] = useState("");
     const [isOpen, setIsOpen] = useState(true);
 
@@ -97,17 +99,26 @@ const Sidebar: React.FC<SidebarProps> = ({ chats, onSelectChat, onNewChat }) => 
 
                         <h2 className="text-xl font-bold mb-4 text-purple-400">Czat</h2>
                         <ul className="space-y-2">
-                            {chats.map(chat => (
-                                <motion.li
-                                    key={chat._id}
-                                    whileHover={{ scale: 1.05 }}
-                                    className="cursor-pointer bg-gray-800 hover:bg-purple-600 p-3 rounded-lg transition-colors"
-                                    onClick={() => onSelectChat(chat._id)}
-                                >
-                                    {chat.title}
-                                </motion.li>
-                            ))}
-                        </ul>
+    {chats.map(chat => (
+        <motion.li
+            key={chat._id}
+            whileHover={{ scale: 1.05 }}
+            className="cursor-pointer flex justify-between items-center bg-gray-800 hover:bg-purple-600 p-3 rounded-lg transition-colors"
+        >
+            <span onClick={() => onSelectChat(chat._id)} className="flex-1">{chat.title}</span>
+            
+            <button
+                onClick={(e) => {
+                    e.stopPropagation(); // Zapobiega przypadkowemu otwieraniu czatu podczas usuwania
+                    onDeleteChat(chat._id);
+                }}
+                className="text-red-500 hover:text-red-700"
+            >
+                <FaTrash />
+            </button>
+        </motion.li>
+    ))}
+</ul>
                     </motion.div>
                 )}
             </AnimatePresence>

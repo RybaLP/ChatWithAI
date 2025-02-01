@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 
 interface Message {
@@ -17,6 +17,9 @@ const ChatWindow: React.FC<ChatWindowProps> = ({ chatId }) => {
     const [messages, setMessages] = useState<Message[]>([]);
     const [newMessageText, setNewMessageText] = useState('');
     const [isBotTyping, setIsBotTyping] = useState(false);
+    const messagesEndRef = useRef<HTMLDivElement | null>(null);
+    const chatContainerRef = useRef<HTMLDivElement | null>(null);
+    const [isUserScrolling, setIsUserScrolling] = useState(false);
 
     useEffect(() => {
         const fetchMessages = async () => {
@@ -41,33 +44,53 @@ const ChatWindow: React.FC<ChatWindowProps> = ({ chatId }) => {
         fetchMessages();
     }, [chatId]);
 
+    useEffect(() => {
+        if (!isUserScrolling) {
+            messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+        }
+    }, [messages, isBotTyping]);
+
+    const handleScroll = () => {
+        if (chatContainerRef.current) {
+            const { scrollTop, scrollHeight, clientHeight } = chatContainerRef.current;
+            setIsUserScrolling(scrollHeight - scrollTop - clientHeight > 50);
+        }
+    };
+
     const handleSendMessage = async () => {
         if (newMessageText.trim() !== '' && chatId) {
-            try {
-                setIsBotTyping(true);
-                
-                const response = await fetch(`/api/chats/${chatId}/addMessage`, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'Authorization': `Bearer ${localStorage.getItem('token')}`
-                    },
-                    body: JSON.stringify({ message: newMessageText }),
-                });
+            const newMessage: Message = {
+                _id: Math.random().toString(36).substr(2, 9),
+                role: 'user',
+                text: newMessageText
+            };
+            setMessages(prevMessages => [...prevMessages, newMessage]);
+            setNewMessageText('');
 
-                if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+            setTimeout(async () => {
+                try {
+                    setIsBotTyping(true);
+                    
+                    await fetch(`/api/chats/${chatId}/addMessage`, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'Authorization': `Bearer ${localStorage.getItem('token')}`
+                        },
+                        body: JSON.stringify({ message: newMessage.text }),
+                    });
 
-                setNewMessageText('');
-                const updatedChat = await fetch(`/api/chats/${chatId}`, {
-                    headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` }
-                });
-                const data = await updatedChat.json();
-                setMessages(data);
-            } catch (error) {
-                console.error('Error sending message:', error);
-            } finally {
-                setIsBotTyping(false);
-            }
+                    const updatedChat = await fetch(`/api/chats/${chatId}`, {
+                        headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` }
+                    });
+                    const data = await updatedChat.json();
+                    setMessages(data);
+                } catch (error) {
+                    console.error('Error sending message:', error);
+                } finally {
+                    setIsBotTyping(false);
+                }
+            }, 500);
         }
     };
 
@@ -110,7 +133,11 @@ const ChatWindow: React.FC<ChatWindowProps> = ({ chatId }) => {
             transition={{ duration: 0.3 }}
             className="flex-1 flex flex-col p-6 bg-gray-900 border-l border-gray-700 h-screen"
         >
-            <div className="flex-grow overflow-y-auto pr-4 custom-scrollbar">
+            <div 
+                className="flex-grow overflow-y-auto pr-4 custom-scrollbar" 
+                ref={chatContainerRef} 
+                onScroll={handleScroll}
+            >
                 <AnimatePresence>
                     {messages.map((message) => (
                         <motion.div
@@ -135,9 +162,9 @@ const ChatWindow: React.FC<ChatWindowProps> = ({ chatId }) => {
                             </div>
                         </motion.div>
                     ))}
-                    
                     {isBotTyping && <TypingIndicator />}
                 </AnimatePresence>
+                <div ref={messagesEndRef} />
             </div>
 
             <div className="mt-6 flex gap-3">
@@ -151,14 +178,12 @@ const ChatWindow: React.FC<ChatWindowProps> = ({ chatId }) => {
                     placeholder="Type your message..."
                     className="flex-grow bg-gray-800 text-white rounded-xl p-4 focus:outline-none focus:ring-2 focus:ring-purple-500 placeholder-gray-400"
                 />
-                
                 <motion.button
                     whileHover={{ scale: 1.05 }}
                     whileTap={{ scale: 0.95 }}
                     onClick={handleSendMessage}
                     disabled={!newMessageText.trim()}
-                    className="bg-gradient-to-br from-purple-500 to-blue-500 text-white font-semibold px-6 py-4 rounded-xl 
-                             disabled:opacity-50 disabled:cursor-not-allowed transition-all"
+                    className="bg-gradient-to-br from-purple-500 to-blue-500 text-white font-semibold px-6 py-4 rounded-xl disabled:opacity-50 disabled:cursor-not-allowed transition-all"
                 >
                     Send
                 </motion.button>

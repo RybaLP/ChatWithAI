@@ -250,53 +250,58 @@ export default function LandingPage() {
       </article>
 
       <article className="min-h-screen bg-black text-white p-8 flex flex-col items-center justify-center">
-        <motion.div
-          initial={{ opacity: 0, y: 50 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8 }}
-          viewport={{ once: true, margin: "-100px" }}
-          className="text-center mb-12"
-        >
-          <h3 className="text-4xl md:text-5xl font-bold mb-6 bg-clip-text text-transparent bg-gradient-to-r from-blue-400 to-pink-400">
-            Użyte technologie
-          </h3>
-        </motion.div>
+      <motion.div
+        initial={{ opacity: 0, y: 50 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.8 }}
+        viewport={{ once: true, margin: "-100px" }}
+        className="text-center mb-12"
+      >
+        <h3 className="text-4xl md:text-5xl font-bold mb-6 bg-clip-text text-transparent bg-gradient-to-r from-blue-400 to-pink-400">
+          Użyte technologie
+        </h3>
+      </motion.div>
 
-        <motion.div
-          initial={{ opacity: 0 }}
-          whileInView={{ opacity: 1 }}
-          transition={{ duration: 0.8, delay: 0.3 }}
-          viewport={{ once: true, margin: "-100px" }}
-          className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-6xl w-full"
-        >
-          {[
-            { src: "nextt.jpg", alt: "Next.js", title: "Next.js", 
-              text: "Framework React do szybkiego renderowania stron i optymalizacji SEO" },
-            { src: "/typescript.png", alt: "TypeScript", title: "TypeScript", 
-              text: "Typowany JavaScript dla bezpieczeństwa kodu i lepszej skalowalności" },
-            { src: "/mongodba.png", alt: "MongoDB", title: "MongoDB", 
-              text: "NoSQL baza danych zapewniająca elastyczność i skalowalność" },
-            { src: "/jwt.png", alt: "JWT", title: "JWT", 
-              text: "Standard bezpiecznego przesyłania informacji poprzez tokeny" },
-            { src: "/tailwind.png", alt: "Tailwind CSS", title: "Tailwind CSS", 
-              text: "Utility-first framework do szybkiego tworzenia interfejsów" },
-            { src: "/bct.png", alt: "Bcrypt", title: "Bcrypt", 
-              text: "Biblioteka do bezpiecznego hashowania haseł" },
-          ].map((tech, index) => (
-            <div key={index} className="flex flex-col items-center text-center p-6 bg-gray-800 rounded-xl shadow-2xl">
-              <div className="w-24 h-24 mb-4 bg-gray-700 rounded-lg overflow-hidden">
-                <LazyImage
-                  src={tech.src}
-                  alt={tech.alt}
-                  className="w-full h-full object-contain"
-                />
-              </div>
-              <h4 className="text-2xl font-bold mb-2">{tech.title}</h4>
-              <p className="text-lg">{tech.text}</p>
+      <motion.div
+        initial={{ opacity: 0 }}
+        whileInView={{ opacity: 1 }}
+        transition={{ duration: 0.8, delay: 0.3 }}
+        viewport={{ once: true, margin: "-100px" }}
+        className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-6xl w-full"
+      >
+        {[
+          { src: "nextt.jpg", alt: "Next.js", title: "Next.js", 
+            text: "Framework React do szybkiego renderowania stron i optymalizacji SEO" },
+          { src: "/typescript.png", alt: "TypeScript", title: "TypeScript", 
+            text: "Typowany JavaScript dla bezpieczeństwa kodu i lepszej skalowalności" },
+          { src: "/mongodba.png", alt: "MongoDB", title: "MongoDB", 
+            text: "NoSQL baza danych zapewniająca elastyczność i skalowalność" },
+          { src: "/jwt.png", alt: "JWT", title: "JWT", 
+            text: "Standard bezpiecznego przesyłania informacji poprzez tokeny" },
+          { src: "/tailwind.png", alt: "Tailwind CSS", title: "Tailwind CSS", 
+            text: "Utility-first framework do szybkiego tworzenia interfejsów" },
+          { src: "/bct.png", alt: "Bcrypt", title: "Bcrypt", 
+            text: "Biblioteka do bezpiecznego hashowania haseł" },
+        ].map((tech, index) => (
+          <motion.div
+            key={index}
+            className="flex flex-col items-center text-center p-6 bg-gray-800 rounded-xl shadow-2xl cursor-pointer"
+            whileHover={{
+              scale: 1.05,
+              rotate: 2,
+              boxShadow: "0px 10px 20px rgba(255, 255, 255, 0.2)"
+            }}
+            transition={{ duration: 0.3 }}
+          >
+            <div className="w-24 h-24 mb-4 bg-gray-700 rounded-lg overflow-hidden">
+              <LazyImage src={tech.src} alt={tech.alt} className="w-full h-full object-contain" />
             </div>
-          ))}
-        </motion.div>
-      </article>
+            <h4 className="text-2xl font-bold mb-2">{tech.title}</h4>
+            <p className="text-lg">{tech.text}</p>
+          </motion.div>
+        ))}
+      </motion.div>
+    </article>
     </>
   );
 }
