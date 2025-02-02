@@ -42,7 +42,7 @@ GROQ_API_KEY
 NEXT_PUBLIC_APP_URL
 MONGO_URI
 ```
-6. **Uruchom projekt:**
+5. **Uruchom projekt:**
  ```bash
 npm run dev
 ```
