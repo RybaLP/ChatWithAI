@@ -1,6 +1,6 @@
 import mongoose from "mongoose";
 
-const MONGO_URI = process.env.MONGO_URI || 'mongodb+srv://rybal:elozelo@cluster.ddmtr.mongodb.net/?retryWrites=true&w=majority&appName=cluster';
+const MONGO_URI = process.env.MONGO_URI || '';
 
 if (!MONGO_URI) {
   throw new Error("Brak URI do bazy danych. Upewnij się, że MONGO_URI jest ustawione w pliku .env.");
