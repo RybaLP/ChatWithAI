@@ -1,3 +1,6 @@
+
+![obraz](https://github.com/user-attachments/assets/b62f1359-0187-48c9-8d1a-3ed2c5f0b207)
+
 # Cosmic AI
 
 **Niezawodny klon Chat GPT, z modelem AI od Groq!**
@@ -37,6 +40,7 @@ npm install
 JWT_SECRET
 GROQ_API_KEY
 NEXT_PUBLIC_APP_URL
+MONGO_URI
 ```
 6. **Uruchom projekt:**
  ```bash
