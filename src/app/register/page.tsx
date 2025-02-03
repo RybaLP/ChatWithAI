@@ -82,6 +82,8 @@ const RegisterPage: React.FC = () => {
   return (
     <div className="relative min-h-screen bg-black overflow-hidden flex flex-col items-center justify-center">
       {/* Animated Background */}
+
+      
       <motion.div
         className="absolute inset-0 z-0"
         initial={{ opacity: 0 }}
@@ -105,6 +107,12 @@ const RegisterPage: React.FC = () => {
         transition={{ duration: 0.7, delay: 0.3 }}
         className="relative z-20 bg-gray-900 p-8 rounded-xl shadow-2xl w-full max-w-md"
       >
+        <button onClick={() => router.push("/")} className="absolute top-4 left-4 text-gray-400 hover:text-gray-100"> 
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6">
+            <path strokeLinecap="round" strokeLinejoin="round" d="M10.5 19.5L3 12m0 0l7.5-7.5M3 12h18" />
+          </svg>
+        </button>
+
         <h1 className="text-3xl font-bold mb-6 text-center bg-clip-text text-transparent bg-gradient-to-r from-blue-400 to-pink-400">
           Rejestracja
         </h1>
